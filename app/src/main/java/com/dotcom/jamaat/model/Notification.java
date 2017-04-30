@@ -4,18 +4,30 @@ package com.dotcom.jamaat.model;
  * Created by hali on 11/8/16.
  */
 public class Notification {
-//    {
-//        "notificationId": 3129,
-//            "Id": 22,
-//            "message": "Meeting cancelled: Discussion on new technology",
-//            "messageType": "meetingCancelled",
-//            "isRead": false,
-//            "isSubscribed": false
-//    },
 
     String title;
     String date;
     Boolean isNew;
+
+    public String getBgColor() {
+        return bgColor;
+    }
+
+    public void setBgColor(String bgColor) {
+        this.bgColor = bgColor;
+    }
+
+    public String getFontColor() {
+        return fontColor;
+    }
+
+    public void setFontColor(String fontColor) {
+        this.fontColor = fontColor;
+    }
+
+    String bgColor;
+    String fontColor;
+
 
     public Boolean getNew() {
         return isNew;

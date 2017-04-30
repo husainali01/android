@@ -205,7 +205,7 @@ public class AppUtility{
         return url;
     }
     public static String getArabicNumbers(String englishNumber){
-        String arabicNumbers = englishNumber.replaceAll("1","١").replaceAll("2","٢").replaceAll("3","٣").replaceAll("4","٤").replaceAll("5","٥").replaceAll("6","٦").replaceAll("7","٧").replaceAll("8","٨").replaceAll("9","٩");
+        String arabicNumbers = englishNumber.replaceAll("0","۰").replaceAll("1","١").replaceAll("2","٢").replaceAll("3","٣").replaceAll("4","٤").replaceAll("5","٥").replaceAll("6","٦").replaceAll("7","٧").replaceAll("8","٨").replaceAll("9","٩");
         return arabicNumbers;
     }
     // This function will create an intent. This intent must take as parameter the "unique_name" that you registered your activity with

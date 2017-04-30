@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,7 +52,10 @@ public class NotificationActivity extends BaseActivity  {
     private ProgressDialog dialog;
     private NetworkUtil networkUtil;
     Context mContext;
-    TextView empty,dayTV,monthTV,miqaatTv,englishDayTv,englishMothTv;
+    int today,eYear;
+    String eMonth,fajr,sunrise,zawal,zuhrEnd,asrEnd,sunset,nisfulLail;
+    private LinearLayout namazLL;
+    TextView empty,dayTV,monthTV,miqaatTv,englishDayTv,englishMothTv,fajrTV,zuhurTv,asrTv,magribTv;
     boolean doubleBackToExitPressedOnce = false;
     private Toast toast;
 
@@ -65,6 +69,11 @@ public class NotificationActivity extends BaseActivity  {
         mListView = (android.support.v7.widget.RecyclerView) findViewById(R.id.notification_listView);
         empty = (TextView) findViewById(R.id.empty);
 //        mListView.setEmptyView(empty);
+        namazLL = (LinearLayout) findViewById(R.id.namazLL);
+        fajrTV = (TextView) findViewById(R.id.fajrTime);
+        zuhurTv = (TextView) findViewById(R.id.zoherStartTime);
+        asrTv = (TextView) findViewById(R.id.asarTime);
+        magribTv = (TextView) findViewById(R.id.magribTime);
         dayTV = (TextView) findViewById(R.id.day);
         englishDayTv = (TextView) findViewById(R.id.english_day);
         englishMothTv = (TextView) findViewById(R.id.english_month_year);
@@ -76,12 +85,10 @@ public class NotificationActivity extends BaseActivity  {
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setTitle("NOTIFICATIONS");
         Calendar calendar = Calendar.getInstance();
-        int today = calendar.get(Calendar.DAY_OF_MONTH);
+         today = calendar.get(Calendar.DAY_OF_MONTH);
 //        String dayLongName = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault());
-        int eYear = calendar.get(Calendar.YEAR);
-        String eMonth = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault());
-        englishDayTv.setText(""+today);
-        englishMothTv.setText(eMonth+", "+ eYear);
+         eYear = calendar.get(Calendar.YEAR);
+         eMonth = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault());
         // 4. Initialize ItemAnimator, LayoutManager and ItemDecorators
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         mListView.setHasFixedSize(true);
@@ -97,6 +104,12 @@ public class NotificationActivity extends BaseActivity  {
     // 8. Set the ItemDecorators
         mListView.addItemDecoration(shadowItemDecorator);
         mListView.addItemDecoration(itemDecorator);
+        namazLL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showNamazDialog();
+            }
+        });
 
     }
 
@@ -107,14 +120,14 @@ public class NotificationActivity extends BaseActivity  {
 
     @Override
     public void showProgress(boolean show, String tag) {
-//        if (show) {
+        if (show) {
 //            empty.setVisibility(View.VISIBLE);
 //            empty.setText("");
-//            showDialog();
-//        } else{
+            showDialog();
+        } else{
 //            empty.setVisibility(View.GONE);
-//            hideDialog();
-//        }
+            hideDialog();
+        }
     }
     public void showDialog() {
         dialog = new ProgressDialog(this);
@@ -134,6 +147,7 @@ public class NotificationActivity extends BaseActivity  {
         Log.v("Notification result::",response.toString());
         if(tag.equalsIgnoreCase(Constants.NOTIFICATIONS_LIST)) {
             try {
+                notificationArrayList = new ArrayList<>();
                 empty.setVisibility(View.GONE);
                 int status = response.getInt("status");
                 if (status == 200) {
@@ -144,6 +158,14 @@ public class NotificationActivity extends BaseActivity  {
                     String year = dataObj.optString("y");
                     String arabicYear = AppUtility.getArabicNumbers(year);
                     String miqaat = dataObj.optString("miqaat");
+                    JSONObject namazObj = response.optJSONObject("namaz");
+                     fajr = namazObj.optString("fajr");
+                     sunrise = namazObj.optString("sunrise");
+                     zawal = namazObj.optString("zawal");
+                     zuhrEnd = namazObj.optString("zuhrEnd");
+                     asrEnd = namazObj.optString("asrEnd");
+                     sunset = namazObj.optString("sunset");
+                     nisfulLail = namazObj.optString("nisfulLail");
                     JSONArray dataArray = response.optJSONArray("data");
                     if(dataArray != null){
                         for (int i = 0; i < dataArray.length(); i++) {
@@ -152,10 +174,14 @@ public class NotificationActivity extends BaseActivity  {
                             String message = notificationObj.optString("message");
                             Boolean isNew = notificationObj.optBoolean("current");
                             long DateTimeStamp = notificationObj.optInt("timestamp");
+                            String bg = notificationObj.optString("bg");
+                            String fontColor = notificationObj.optString("font");
                             String date = AppUtility.getDateTime(DateTimeStamp);
                             notification.setTitle(message);
                             notification.setDate(date);
                             notification.setNew(isNew);
+                            notification.setBgColor(bg);
+                            notification.setFontColor(fontColor);
 
                             if (notification != null) {
                                 notificationArrayList.add(notification);
@@ -165,10 +191,18 @@ public class NotificationActivity extends BaseActivity  {
                         empty.setVisibility(View.VISIBLE);
                         empty.setText("No Message Today");
                     }
-
+                    mAdapter = new NotificationAdapter(NotificationActivity.this, R.layout.notification_list_item,
+                            notificationArrayList);
+                    mListView.setAdapter(mAdapter);
+                    englishDayTv.setText(""+today);
+                    englishMothTv.setText(eMonth+", "+ eYear);
                     dayTV.setText(arrabicDay);
                     monthTV.setText(month + " "+ arabicYear);
                     miqaatTv.setText(miqaat);
+                    fajrTV.setText("Fajr"+"\n"+fajr);
+                    zuhurTv.setText("Zuhr Start"+"\n"+zawal);
+                    asrTv.setText("Zuhr End"+"\n"+zuhrEnd);
+                    magribTv.setText("Sunset"+"\n"+sunset);
                     mAdapter.notifyDataSetChanged();
                     // Call onLoadMoreComplete when the LoadMore task, has finished
                 }else if(status == 401) {
@@ -199,15 +233,13 @@ public class NotificationActivity extends BaseActivity  {
 
     @Override
     protected void onStart() {
-        notificationArrayList = new ArrayList<>();
-        mAdapter = new NotificationAdapter(NotificationActivity.this, R.layout.notification_list_item,
-                notificationArrayList);
-        mListView.setAdapter(mAdapter);
+
         if (NetworkUtil.isConnected()) {
             loadJsonData(Request.Method.GET, Constants.NOTIFICATIONS_LIST, null, Constants.NOTIFICATIONS_LIST, false);
-        } else {
-            empty.setVisibility(View.VISIBLE);
-            empty.setText(R.string.no_internet_connection);
+        } else {;
+//                empty.setVisibility(View.VISIBLE);
+//            empty.setText(R.string.no_internet_connection);
+
             Toast.makeText(NotificationActivity.this, R.string.network_not_connected_error_msg, Toast.LENGTH_LONG).show();
         }
         SharedPreferencesManager.removePreference("notificationMessage");
@@ -259,8 +291,8 @@ public class NotificationActivity extends BaseActivity  {
         if (NetworkUtil.isConnected()) {
             loadJsonData(Request.Method.GET, Constants.NOTIFICATIONS_LIST, null, Constants.NOTIFICATIONS_LIST, false);
         } else {
-            empty.setVisibility(View.VISIBLE);
-            empty.setText(R.string.no_internet_connection);
+//            empty.setVisibility(View.VISIBLE);
+//            empty.setText(R.string.no_internet_connection);
             Toast.makeText(NotificationActivity.this, R.string.network_not_connected_error_msg, Toast.LENGTH_LONG).show();
         }
     }
@@ -347,6 +379,28 @@ public class NotificationActivity extends BaseActivity  {
 //                startActivity(smsIntent);
             }
         });
+        dialog.show();
+    }
+    public void showNamazDialog(){
+        final Dialog dialog = new Dialog(NotificationActivity.this);
+//        dialog.setCancelable(true);
+        dialog.setTitle("Namaz Timings");
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.setContentView(R.layout.namaz_time_dialog);
+        TextView fajrT = (TextView) dialog.findViewById(R.id.fajrNamaz);
+        TextView sunriseNamaz = (TextView) dialog.findViewById(R.id.sunriseNamaz);
+        TextView zhurStart = (TextView) dialog.findViewById(R.id.zuhrStartNamaz);
+        TextView zhurEnd = (TextView) dialog.findViewById(R.id.zhurEndNamaz);
+        TextView asarEnd = (TextView) dialog.findViewById(R.id.asrEndNamaz);
+        TextView sunsetTv = (TextView) dialog.findViewById(R.id.sunsetNamaz);
+        TextView nisfUlLail = (TextView) dialog.findViewById(R.id.nisfNamaz);
+        fajrT.setText("Fajr  :"+fajr);
+        sunriseNamaz.setText("Fajr End  :"+sunrise);
+        zhurStart.setText("zawal  :"+zawal);
+        zhurEnd.setText("zuhr End  :"+zuhrEnd);
+        asarEnd.setText("Asr End  :"+asrEnd);
+        sunsetTv.setText("Magrib  :"+sunset);
+        nisfUlLail.setText("Nisf-ul-lail  :"+nisfulLail);
         dialog.show();
     }
 }

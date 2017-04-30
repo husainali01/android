@@ -25,7 +25,6 @@
             android:padding="@dimen/dimen_15_dp"
             android:gravity="center"
             android:layout_weight="1"
-            android:layout_marginBottom="@dimen/dimen_10_dp"
             android:orientation="vertical">
             <TextView
                 android:id="@+id/day"
@@ -33,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="40sp"
-                android:text=""
+                android:text="-"
                 style="@style/TextAppearanceBold.FontPath"
                 />
             <TextView
@@ -50,14 +49,14 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/dimen_15_dp"
             android:gravity="center"
-            android:layout_marginBottom="@dimen/dimen_10_dp"
+            android:layout_weight="1"
             android:orientation="vertical">
             <TextView
                 android:id="@+id/english_day"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="40sp"
-                android:text=""
+                android:text="-"
                 android:textColor="@color/login_bg"
                 style="@style/TextAppearanceMedium.FontPath"
                 />
@@ -90,7 +89,7 @@
         android:background="@color/white"
         android:gravity="center"
         style="@style/TextAppearanceBold.FontPath"
-        android:text="Today's Miqat"/>
+        android:text="-"/>
 
     <TextView
         android:id="@+id/empty"
@@ -108,19 +107,75 @@
         android:layout_height="match_parent"
         android:background="@color/lightgreay"
         android:paddingTop="@dimen/dimen_2_dp"
+        android:paddingBottom="2dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:orientation="vertical">
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/notification_listView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:elevation="@dimen/dimen_5_dp"
+                android:elevation="@dimen/dimen_3_dp"
                 android:layout_weight="1"
                 />
 <!--        <View
             android:layout_width="@dimen/dimen_0_dp"
             android:layout_height="@dimen/dimen_0_dp"
             android:layout_weight="1"/>-->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dimen_0.5_dp"
+            android:background="@color/line_color"
+            />
+        <LinearLayout
+            android:id="@+id/namazLL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/white"
+            android:layout_marginTop="@dimen/dimen_2_dp"
+            android:weightSum="2">
+            <TextView
+                android:id="@+id/fajrTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_5_dp"
+                android:layout_weight="0.5"
+                style="@style/TextAppearanceMedium.FontPath"
+                android:gravity="center"
+                android:text="hello"
+                />
+            <TextView
+                android:id="@+id/zoherStartTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_5_dp"
+                android:layout_weight="0.5"
+                android:gravity="center"
+                style="@style/TextAppearanceMedium.FontPath"
+                android:text="hello"
+                />
+            <TextView
+                android:id="@+id/asarTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_5_dp"
+                android:layout_weight="0.5"
+                style="@style/TextAppearanceMedium.FontPath"
+                android:gravity="center"
+                android:text="hello"
+                />
+            <TextView
+                android:id="@+id/magribTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_5_dp"
+                android:layout_weight="0.5"
+                android:gravity="center"
+                style="@style/TextAppearanceMedium.FontPath"
+                android:text="hello"
+                />
+
+        </LinearLayout>
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/dimen_0.5_dp"
